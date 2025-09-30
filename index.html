@@ -1,0 +1,1669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C Programming Comprehensive Exam - 30 Questions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --secondary: #7c3aed;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --darker: #0f172a;
+            --light: #f1f5f9;
+            --text: #e2e8f0;
+            --border: #334155;
+            --card-bg: rgba(30, 41, 59, 0.8);
+            --correct: #10b981;
+            --incorrect: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Styles */
+        header {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .exam-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .exam-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .student-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(79, 70, 229, 0.1);
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(79, 70, 229, 0.3);
+        }
+
+        .student-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Timer Styles */
+        .timer-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            min-width: 150px;
+            justify-content: center;
+        }
+
+        .timer {
+            font-size: 1.2rem;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .timer.warning {
+            color: var(--timer-warning);
+        }
+
+        .timer.danger {
+            color: var(--timer-danger);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            width: 100%;
+        }
+
+        .exam-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+            height: calc(100vh - 180px);
+        }
+
+        /* Question Navigation */
+        .question-nav {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+
+        .nav-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .question-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+        }
+
+        .question-btn:hover {
+            background: rgba(79, 70, 229, 0.1);
+            border-color: var(--primary);
+        }
+
+        .question-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .question-btn.answered {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .question-btn.flagged {
+            background: rgba(245, 158, 11, 0.2);
+            border-color: var(--warning);
+            color: var(--warning);
+        }
+
+        .legend {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+
+        /* Question Content */
+        .question-content {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .question-number {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .question-marks {
+            background: rgba(79, 70, 229, 0.1);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .question-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--text);
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+            padding: 5px;
+        }
+
+        .action-btn:hover {
+            color: var(--primary);
+        }
+
+        .action-btn.flagged {
+            color: var(--warning);
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .code-block {
+            background: var(--darker);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+        }
+
+        /* Question Types */
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .option:hover {
+            background: rgba(79, 70, 229, 0.1);
+            border-color: var(--primary);
+        }
+
+        .option.selected {
+            background: rgba(79, 70, 229, 0.2);
+            border-color: var(--primary);
+        }
+
+        .option-input {
+            margin-top: 2px;
+        }
+
+        .option-text {
+            flex: 1;
+            line-height: 1.5;
+        }
+
+        .fill-blank {
+            display: inline-block;
+            min-width: 150px;
+            padding: 5px 10px;
+            margin: 0 5px;
+            border-bottom: 2px solid var(--primary);
+            background: rgba(79, 70, 229, 0.1);
+            border-radius: 4px;
+            outline: none;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        .code-editor {
+            background: var(--darker);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            border: 1px solid var(--border);
+        }
+
+        .code-textarea {
+            width: 100%;
+            min-height: 200px;
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            resize: vertical;
+            outline: none;
+        }
+
+        /* Navigation Buttons */
+        .question-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn.prev {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text);
+        }
+
+        .nav-btn.prev:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-btn.next {
+            background: var(--primary);
+            color: white;
+        }
+
+        .nav-btn.next:hover {
+            background: var(--secondary);
+        }
+
+        .nav-btn.submit {
+            background: var(--success);
+            color: white;
+        }
+
+        .nav-btn.submit:hover {
+            background: #059669;
+        }
+
+        /* Submit Confirmation Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .modal-text {
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .modal-btn.cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text);
+        }
+
+        .modal-btn.confirm {
+            background: var(--success);
+            color: white;
+        }
+
+        /* Results Page */
+        .results-container {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 40px;
+            border: 1px solid var(--border);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .results-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .score-display {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin: 20px 0;
+            color: var(--success);
+        }
+
+        .score-details {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .score-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+
+        .score-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .performance-message {
+            font-size: 1.2rem;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--success);
+        }
+
+        /* Question Review */
+        .review-section {
+            margin-top: 40px;
+        }
+
+        .review-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .review-questions {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .review-question {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid var(--border);
+        }
+
+        .review-question.correct {
+            border-left: 4px solid var(--correct);
+        }
+
+        .review-question.incorrect {
+            border-left: 4px solid var(--incorrect);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .review-question-number {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .review-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .review-status.correct {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--correct);
+        }
+
+        .review-status.incorrect {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--incorrect);
+        }
+
+        .review-question-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .review-answers {
+            display: grid;
+            gap: 15px;
+        }
+
+        .review-answer {
+            padding: 12px 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .review-answer.your-answer {
+            background: rgba(79, 70, 229, 0.1);
+            border: 1px solid rgba(79, 70, 229, 0.3);
+        }
+
+        .review-answer.correct-answer {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .review-answer.wrong-answer {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .review-answer-label {
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .review-explanation {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border-left: 3px solid var(--warning);
+        }
+
+        .review-explanation-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--warning);
+        }
+
+        .review-explanation-text {
+            line-height: 1.5;
+        }
+
+        .review-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .review-btn {
+            background: var(--primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .review-btn:hover {
+            background: var(--secondary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .exam-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .question-nav {
+                position: static;
+                order: 2;
+            }
+
+            .question-content {
+                order: 1;
+            }
+
+            .question-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+
+            .score-details {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .exam-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .results-title {
+                font-size: 2rem;
+            }
+
+            .score-display {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* Loading Animation */
+        .loader {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="exam-title">
+                <i class="fas fa-graduation-cap"></i>
+                C Programming Comprehensive Exam
+            </div>
+            <div class="exam-info">
+                <div class="student-info">
+                    <div class="student-avatar">JD</div>
+                    <div>
+                        <div style="font-weight: 600;">John Doe</div>
+                        <div style="font-size: 0.85rem; opacity: 0.7;">ID: CS2023001</div>
+                    </div>
+                </div>
+                <div class="timer-container">
+                    <i class="fas fa-clock"></i>
+                    <div class="timer" id="timer">90:00</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="exam-container" id="exam-container">
+            <!-- Question Navigation -->
+            <aside class="question-nav">
+                <h3 class="nav-title">Questions (1-30)</h3>
+                <div class="question-grid" id="question-grid">
+                    <!-- Question buttons will be generated here -->
+                </div>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: var(--primary);"></div>
+                        <span>Current</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: rgba(16, 185, 129, 0.2); border-color: var(--success);"></div>
+                        <span>Answered</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: rgba(245, 158, 11, 0.2); border-color: var(--warning);"></div>
+                        <span>Flagged</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: rgba(255, 255, 255, 0.05);"></div>
+                        <span>Not Visited</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Question Content -->
+            <section class="question-content" id="question-content">
+                <!-- Question will be loaded here -->
+            </section>
+        </div>
+
+        <!-- Results Container (Initially Hidden) -->
+        <div class="results-container" id="results-container" style="display: none;">
+            <div class="results-header">
+                <h2 class="results-title">Exam Results</h2>
+                <div class="score-display" id="score-display">0/30</div>
+                <div class="performance-message" id="performance-message">Great job!</div>
+            </div>
+            
+            <div class="score-details">
+                <div class="score-item">
+                    <div class="score-label">Total Questions</div>
+                    <div class="score-value" id="total-questions">30</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">Correct Answers</div>
+                    <div class="score-value" id="correct-answers">0</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">Wrong Answers</div>
+                    <div class="score-value" id="wrong-answers">0</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">Percentage</div>
+                    <div class="score-value" id="percentage">0%</div>
+                </div>
+            </div>
+            
+            <div class="review-section">
+                <h3 class="review-title">Question Review</h3>
+                <div class="review-questions" id="review-questions">
+                    <!-- Review questions will be generated here -->
+                </div>
+            </div>
+            
+            <div class="review-actions">
+                <button class="review-btn" onclick="printResults()">
+                    <i class="fas fa-print"></i> Print Results
+                </button>
+                <button class="review-btn" onclick="finishExam()">
+                    <i class="fas fa-sign-out-alt"></i> Finish
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Submit Confirmation Modal -->
+    <div class="modal" id="submit-modal">
+        <div class="modal-content">
+            <h3 class="modal-title">Submit Exam?</h3>
+            <p class="modal-text">Are you sure you want to submit your exam? You cannot change your answers after submission.</p>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeSubmitModal()">Cancel</button>
+                <button class="modal-btn confirm" onclick="submitExam()">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Comprehensive Exam Data with 30 Questions
+        const examData = {
+            questions: [
+                // Basic Concepts (Questions 1-5)
+                {
+                    id: 1,
+                    type: 'multiple-choice',
+                    marks: 1,
+                    question: 'Which of the following is not a valid C data type?',
+                    options: [
+                        'int',
+                        'float',
+                        'string',
+                        'char'
+                    ],
+                    correct: 2,
+                    explanation: 'In C, there is no built-in "string" data type. Strings are represented as arrays of characters terminated by a null character (\\0).'
+                },
+                {
+                    id: 2,
+                    type: 'multiple-choice',
+                    marks: 1,
+                    question: 'What is the correct way to declare a pointer to an integer in C?',
+                    options: [
+                        'int ptr;',
+                        'int *ptr;',
+                        'pointer int ptr;',
+                        'int &ptr;'
+                    ],
+                    correct: 1,
+                    explanation: 'In C, pointers are declared using an asterisk (*) before the variable name. "int *ptr;" declares a pointer named "ptr" that can point to an integer.'
+                },
+                {
+                    id: 3,
+                    type: 'multiple-choice',
+                    marks: 1,
+                    question: 'Which function is used to allocate memory dynamically in C?',
+                    options: [
+                        'alloc()',
+                        'malloc()',
+                        'new()',
+                        'create()'
+                    ],
+                    correct: 1,
+                    explanation: 'malloc() is the standard C function for dynamic memory allocation. "new" is used in C++, not C. alloc() and create() are not standard C functions.'
+                },
+                {
+                    id: 4,
+                    type: 'true-false',
+                    marks: 1,
+                    question: 'In C, array indices start from 1.',
+                    options: [
+                        'True',
+                        'False'
+                    ],
+                    correct: 1,
+                    explanation: 'In C, array indices always start from 0, not 1. The first element of an array is at index 0.'
+                },
+                {
+                    id: 5,
+                    type: 'fill-blank',
+                    marks: 1,
+                    question: 'The _________ function is used to print formatted output in C.',
+                    answer: 'printf',
+                    explanation: 'printf() is the standard C function used for printing formatted output to the console.'
+                },
+                
+                // Variables and Data Types (Questions 6-10)
+                {
+                    id: 6,
+                    type: 'multiple-choice',
+                    marks: 1,
+                    question: 'What is the size of int data type in C?',
+                    options: [
+                        '2 bytes',
+                        '4 bytes',
+                        '8 bytes',
+                        'Depends on the system'
+                    ],
+                    correct: 3,
+                    explanation: 'The size of int in C is not fixed and depends on the system architecture. It\'s typically 2 bytes on 16-bit systems, 4 bytes on 32-bit systems, and 4 or 8 bytes on 64-bit systems.'
+                },
+                {
+                    id: 7,
+                    type: 'multiple-choice',
+                    marks: 1,
+                    question: 'Which of the following is used to terminate a statement in C?',
+                    options: [
+                        '.',
+                        ';',
+                        ':',
+                        ','
+                    ],
+                    correct: 1,
+                    explanation: 'In C, statements are terminated with a semicolon (;). This is a fundamental syntax rule in C programming.'
+                },
+                {
+                    id: 8,
+                    type: 'multiple-choice',
+                    marks: 1,
+                    question: 'What will be the output of the following code?\n\n#include <stdio.h>\nint main() {\n    int x = 5;\n    printf("%d", x++);\n    return 0;\n}',
+                    options: [
+                        '5',
+                        '6',
+                        'Error',
+                        'Garbage value'
+                    ],
+                    correct: 0,
+                    explanation: 'The post-increment operator (x++) first uses the current value of x (5) for the printf statement, then increments x to 6. So the output is 5.'
+                },
+                {
+                    id: 9,
+                    type: 'multiple-choice',
+                    marks: 1,
+                    question: 'Which keyword is used to create a constant in C?',
+                    options: [
+                        'const',
+                        'constant',
+                        'final',
+                        'define'
+                    ],
+                    correct: 0,
+                    explanation: 'The "const" keyword is used to declare constants in C. While #define can also create constants, it\'s a preprocessor directive, not a keyword.'
+                },
+                {
+                    id: 10,
+                    type: 'fill-blank',
+                    marks: 1,
+                    question: 'The _________ operator is used to get the address of a variable.',
+                    answer: '&',
+                    explanation: 'The ampersand (&) is the address-of operator in C, used to get the memory address of a variable.'
+                },
+                
+                // Operators and Expressions (Questions 11-15)
+                {
+                    id: 11,
+                    type: 'multiple-choice',
+                    marks: 1,
+                    question: 'What is the value of the expression: 5 + 3 * 2?',
+                    options: [
+                        '16',
+                        '11',
+                        '10',
+                        '13'
+                    ],
+                    correct: 1,
+                    explanation: 'According to operator precedence, multiplication (*) has higher precedence than addition (+). So 3 * 2 = 6, then 5 + 6 = 11.'
+                },
+                {
+                    id: 12,
+                    type: 'multiple-choice',
+                    marks: 1,
+                    question: 'Which operator has the highest precedence in C?',
+                    options: [
+                        '+',
+                        '*',
+                        '()',
+                        '='
+                    ],
+                    correct: 2,
+                    explanation: 'Parentheses () have the highest precedence among all operators in C. They are used to override the default precedence and associativity.'
+                },
+                {
+                    id: 13,
+                    type: 'multiple-choice',
+                    marks: 1,
+                    question: 'What is the result of 10 % 3 in C?',
+                    options: [
+                        '3',
+                        '1',
+                        '0',
+                        '3.33'
+                    ],
+                    correct: 1,
+                    explanation: 'The % operator is the modulo operator in C, which returns the remainder of division. 10 divided by 3 is 3 with a remainder of 1.'
+                },
+                {
+                    id: 14,
+                    type: 'multiple-choice',
+                    marks: 1,
+                    question: 'Which of the following is a relational operator in C?',
+                    options: [
+                        '==',
+                        '=',
+                        '+=',
+                        '*='
+                    ],
+                    correct: 0,
+                    explanation: '== is the equality operator in C, used to compare two values. = is assignment, while += and *= are compound assignment operators.'
+                },
+                {
+                    id: 15,
+                    type: 'multiple-choice',
+                    marks: 1,
+                    question: 'What is the output of: printf("%d", !0);',
+                    options: [
+                        '0',
+                        '1',
+                        'Error',
+                        'Garbage value'
+                    ],
+                    correct: 1,
+                    explanation: '! is the logical NOT operator. In C, 0 represents false, and any non-zero value represents true. !0 evaluates to 1 (true).'
+                },
+                
+                // Control Flow (Questions 16-20)
+                {
+                    id: 16,
+                    type: 'multiple-choice',
+                    marks: 1,
+                    question: 'Which statement is used to exit a loop prematurely in C?',
+                    options: [
+                        'exit',
+                        'break',
+                        'continue',
+                        'return'
+                    ],
+                    correct: 1,
+                    explanation: 'The break statement is used to exit a loop prematurely. continue skips the current iteration, exit terminates the program, and return exits a function.'
+                },
+                {
+                    id: 17,
+                    type: 'multiple-choice',
+                    marks: 1,
+                    question: 'How many times will the following loop execute?\n\nfor(int i = 0; i < 5; i++)',
+                    options: [
+                        '4',
+                        '5',
+                        '6',
+                        'Infinite'
+                    ],
+                    correct: 1,
+                    explanation: 'The loop will execute for i = 0, 1, 2, 3, 4, which is 5 times. The condition i < 5 is false when i becomes 5.'
+                },
+                {
+                    id: 18,
+                    type: 'multiple-choice',
+                    marks: 1,
+                    question: 'Which of the following is a selection statement in C?',
+                    options: [
+                        'if',
+                        'for',
+                        'while',
+                        'do-while'
+                    ],
+                    correct: 0,
+                    explanation: 'if is a selection statement used for conditional execution. for, while, and do-while are iteration statements (loops).'
+                },
+                {
+                    id: 19,
+                    type: 'multiple-choice',
+                    marks: 1,
+                    question: 'What is the output of the following code?\n\nint x = 5;\nif(x = 0)\n    printf("Hello");\nelse\n    printf("World");',
+                    options: [
+                        'Hello',
+                        'World',
+                        'HelloWorld',
+                        'Error'
+                    ],
+                    correct: 1,
+                    explanation: 'The condition uses assignment (=) instead of comparison (==). x = 0 assigns 0 to x and evaluates to 0 (false), so the else block executes, printing "World".'
+                },
+                {
+                    id: 20,
+                    type: 'multiple-choice',
+                    marks: 1,
+                    question: 'Which statement is used to skip the current iteration of a loop?',
+                    options: [
+                        'break',
+                        'continue',
+                        'goto',
+                        'return'
+                    ],
+                    correct: 1,
+                    explanation: 'The continue statement is used to skip the current iteration of a loop and move to the next iteration.'
+                },
+                
+                // Arrays and Strings (Questions 21-25)
+                {
+                    id: 21,
+                    type: 'multiple-choice',
+                    marks: 1,
+                    question: 'How do you declare an array of 10 integers in C?',
+                    options: [
+                        'int array[10];',
+                        'int array(10);',
+                        'array[10] int;',
+                        'int array = 10;'
+                    ],
+                    correct: 0,
+                    explanation: 'In C, arrays are declared using square brackets: type array[size];. So int array[10]; declares an array of 10 integers.'
+                },
+                {
+                    id: 22,
+                    type: 'multiple-choice',
+                    marks: 1,
+                    question: 'What is the null character in C?',
+                    options: [
+                        '\\n',
+                        '\\t',
+                        '\\0',
+                        '\\r'
+                    ],
+                    correct: 2,
+                    explanation: '\\0 is the null character in C, used to terminate strings. It has ASCII value 0.'
+                },
+                {
+                    id: 23,
+                    type: 'multiple-choice',
+                    marks: 1,
+                    question: 'Which function is used to find the length of a string in C?',
+                    options: [
+                        'strlen()',
+                        'strlength()',
+                        'length()',
+                        'size()'
+                    ],
+                    correct: 0,
+                    explanation: 'strlen() is the standard C function from string.h that returns the length of a string (excluding the null terminator).'
+                },
+                {
+                    id: 24,
+                    type: 'multiple-choice',
+                    marks: 1,
+                    question: 'What is the index of the last element in an array of size 10?',
+                    options: [
+                        '10',
+                        '9',
+                        '0',
+                        '11'
+                    ],
+                    correct: 1,
+                    explanation: 'Array indices in C start from 0, so an array of size 10 has indices from 0 to 9. The last element is at index 9.'
+                },
+                {
+                    id: 25,
+                    type: 'multiple-choice',
+                    marks: 1,
+                    question: 'Which header file contains string manipulation functions in C?',
+                    options: [
+                        'stdio.h',
+                        'stdlib.h',
+                        'string.h',
+                        'math.h'
+                    ],
+                    correct: 2,
+                    explanation: 'string.h is the header file that contains declarations for string manipulation functions like strcpy, strlen, strcmp, etc.'
+                },
+                
+                // Functions and Pointers (Questions 26-30)
+                {
+                    id: 26,
+                    type: 'multiple-choice',
+                    marks: 1,
+                    question: 'What is the default return type of a function in C if no type is specified?',
+                    options: [
+                        'void',
+                        'int',
+                        'float',
+                        'Error'
+                    ],
+                    correct: 1,
+                    explanation: 'If no return type is specified for a function in C, it defaults to int. However, it\'s good practice to always specify the return type explicitly.'
+                },
+                {
+                    id: 27,
+                    type: 'multiple-choice',
+                    marks: 1,
+                    question: 'Which of the following is true about function parameters in C?',
+                    options: [
+                        'C supports pass by reference',
+                        'C supports pass by value only',
+                        'C supports both pass by value and pass by reference',
+                        'C supports neither'
+                    ],
+                    correct: 1,
+                    explanation: 'C supports pass by value only. Pass by reference can be simulated using pointers, but technically parameters are always passed by value.'
+                },
+                {
+                    id: 28,
+                    type: 'multiple-choice',
+                    marks: 1,
+                    question: 'What is a pointer in C?',
+                    options: [
+                        'A variable that stores a memory address',
+                        'A variable that stores a value',
+                        'A type of function',
+                        'A type of array'
+                    ],
+                    correct: 0,
+                    explanation: 'A pointer in C is a variable that stores the memory address of another variable. It "points" to a location in memory.'
+                },
+                {
+                    id: 29,
+                    type: 'multiple-choice',
+                    marks: 1,
+                    question: 'Which operator is used to access the value pointed to by a pointer?',
+                    options: [
+                        '&',
+                        '*',
+                        '->',
+                        '.'
+                    ],
+                    correct: 1,
+                    explanation: 'The asterisk (*) is the dereference operator in C, used to access the value pointed to by a pointer. & is the address-of operator.'
+                },
+                {
+                    id: 30,
+                    type: 'multiple-choice',
+                    marks: 1,
+                    question: 'What is the purpose of the malloc() function?',
+                    options: [
+                        'To free memory',
+                        'To allocate memory dynamically',
+                        'To copy memory',
+                        'To resize memory'
+                    ],
+                    correct: 1,
+                    explanation: 'malloc() is used to allocate a block of memory dynamically at runtime. free() is used to deallocate memory, memcpy() to copy, and realloc() to resize.'
+                }
+            ],
+            totalMarks: 30
+        };
+
+        // Exam State
+        let currentQuestion = 0;
+        let answers = {};
+        let flaggedQuestions = new Set();
+        let timeRemaining = 5400; // 90 minutes in seconds
+        let timerInterval;
+        let examSubmitted = false;
+
+        // Initialize Exam
+        function initExam() {
+            generateQuestionNav();
+            loadQuestion(0);
+            startTimer();
+        }
+
+        // Generate Question Navigation
+        function generateQuestionNav() {
+            const questionGrid = document.getElementById('question-grid');
+            questionGrid.innerHTML = '';
+            
+            examData.questions.forEach((question, index) => {
+                const button = document.createElement('button');
+                button.className = 'question-btn';
+                button.textContent = index + 1;
+                button.onclick = () => loadQuestion(index);
+                button.id = `q-btn-${index}`;
+                questionGrid.appendChild(button);
+            });
+        }
+
+        // Load Question
+        function loadQuestion(index) {
+            if (index < 0 || index >= examData.questions.length) return;
+            
+            currentQuestion = index;
+            const question = examData.questions[index];
+            const questionContent = document.getElementById('question-content');
+            
+            // Update navigation buttons
+            document.querySelectorAll('.question-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(`q-btn-${index}`).classList.add('active');
+            
+            // Generate question HTML
+            let questionHTML = `
+                <div class="question-header">
+                    <div class="question-number">Question ${index + 1}</div>
+                    <div class="question-marks">${question.marks} Mark${question.marks > 1 ? 's' : ''}</div>
+                    <div class="question-actions">
+                        <button class="action-btn ${flaggedQuestions.has(index) ? 'flagged' : ''}" onclick="toggleFlag(${index})" title="Flag for review">
+                            <i class="fas fa-flag"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="question-text">${question.question}</div>
+            `;
+            
+            // Add question-specific content
+            if (question.type === 'multiple-choice' || question.type === 'true-false') {
+                questionHTML += '<div class="options-container">';
+                question.options.forEach((option, optIndex) => {
+                    const isSelected = answers[index] === optIndex;
+                    questionHTML += `
+                        <div class="option ${isSelected ? 'selected' : ''}" onclick="selectOption(${index}, ${optIndex})">
+                            <div class="option-input">
+                                <input type="radio" name="q${index}" value="${optIndex}" ${isSelected ? 'checked' : ''}>
+                            </div>
+                            <div class="option-text">${option}</div>
+                        </div>
+                    `;
+                });
+                questionHTML += '</div>';
+            } else if (question.type === 'fill-blank') {
+                const answer = answers[index] || '';
+                questionHTML += `
+                    <div class="options-container">
+                        <div class="option">
+                            <div class="option-text">
+                                Answer: <input type="text" class="fill-blank" value="${answer}" onchange="saveFillBlank(${index}, this.value)" placeholder="Type your answer here">
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Add navigation buttons
+            questionHTML += `
+                <div class="question-navigation">
+                    <button class="nav-btn prev" onclick="previousQuestion()" ${index === 0 ? 'disabled' : ''}>
+                        <i class="fas fa-arrow-left"></i> Previous
+                    </button>
+                    <div>
+                        ${index < examData.questions.length - 1 ? 
+                            `<button class="nav-btn next" onclick="nextQuestion()">
+                                Next <i class="fas fa-arrow-right"></i>
+                            </button>` : 
+                            `<button class="nav-btn submit" onclick="showSubmitModal()">
+                                <i class="fas fa-paper-plane"></i> Submit Exam
+                            </button>`
+                        }
+                    </div>
+                </div>
+            `;
+            
+            questionContent.innerHTML = questionHTML;
+        }
+
+        // Select Option
+        function selectOption(questionIndex, optionIndex) {
+            answers[questionIndex] = optionIndex;
+            updateQuestionStatus(questionIndex);
+            loadQuestion(questionIndex); // Reload to update selection
+        }
+
+        // Save Fill Blank Answer
+        function saveFillBlank(questionIndex, value) {
+            answers[questionIndex] = value.trim();
+            updateQuestionStatus(questionIndex);
+        }
+
+        // Update Question Status
+        function updateQuestionStatus(questionIndex) {
+            const button = document.getElementById(`q-btn-${questionIndex}`);
+            if (answers[questionIndex] !== undefined) {
+                button.classList.add('answered');
+            }
+        }
+
+        // Toggle Flag
+        function toggleFlag(questionIndex) {
+            if (flaggedQuestions.has(questionIndex)) {
+                flaggedQuestions.delete(questionIndex);
+            } else {
+                flaggedQuestions.add(questionIndex);
+            }
+            loadQuestion(questionIndex); // Reload to update flag button
+        }
+
+        // Navigation Functions
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                loadQuestion(currentQuestion - 1);
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < examData.questions.length - 1) {
+                loadQuestion(currentQuestion + 1);
+            }
+        }
+
+        // Timer Functions
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    submitExam();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            const timerElement = document.getElementById('timer');
+            timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Add warning classes
+            timerElement.classList.remove('warning', 'danger');
+            if (timeRemaining <= 300) { // 5 minutes
+                timerElement.classList.add('danger');
+            } else if (timeRemaining <= 900) { // 15 minutes
+                timerElement.classList.add('warning');
+            }
+        }
+
+        // Submit Functions
+        function showSubmitModal() {
+            document.getElementById('submit-modal').classList.add('show');
+        }
+
+        function closeSubmitModal() {
+            document.getElementById('submit-modal').classList.remove('show');
+        }
+
+        function submitExam() {
+            if (examSubmitted) return;
+            
+            examSubmitted = true;
+            clearInterval(timerInterval);
+            closeSubmitModal();
+            
+            // Calculate results
+            const results = calculateResults();
+            
+            // Show results
+            showResults(results);
+        }
+
+        // Calculate Results
+        function calculateResults() {
+            let totalScore = 0;
+            let correctCount = 0;
+            let wrongCount = 0;
+            const questionResults = [];
+            
+            examData.questions.forEach((question, index) => {
+                const userAnswer = answers[index];
+                let isCorrect = false;
+                
+                if (question.type === 'multiple-choice' || question.type === 'true-false') {
+                    isCorrect = userAnswer === question.correct;
+                } else if (question.type === 'fill-blank') {
+                    isCorrect = userAnswer && userAnswer.toLowerCase() === question.answer.toLowerCase();
+                }
+                
+                if (isCorrect) {
+                    totalScore += question.marks;
+                    correctCount++;
+                } else {
+                    wrongCount++;
+                }
+                
+                questionResults.push({
+                    question: question,
+                    userAnswer: userAnswer,
+                    isCorrect: isCorrect
+                });
+            });
+            
+            return {
+                totalScore,
+                correctCount,
+                wrongCount,
+                totalQuestions: examData.questions.length,
+                percentage: Math.round((totalScore / examData.totalMarks) * 100),
+                questionResults: questionResults
+            };
+        }
+
+        // Show Results
+        function showResults(results) {
+            document.getElementById('exam-container').style.display = 'none';
+            document.getElementById('results-container').style.display = 'block';
+            
+            document.getElementById('score-display').textContent = `${results.totalScore}/${examData.totalMarks}`;
+            document.getElementById('total-questions').textContent = results.totalQuestions;
+            document.getElementById('correct-answers').textContent = results.correctCount;
+            document.getElementById('wrong-answers').textContent = results.wrongCount;
+            document.getElementById('percentage').textContent = `${results.percentage}%`;
+            
+            // Set performance message
+            let message = '';
+            if (results.percentage >= 80) {
+                message = 'Excellent work! You have a strong understanding of C programming concepts.';
+            } else if (results.percentage >= 60) {
+                message = 'Good job! You have a decent understanding of C programming.';
+            } else if (results.percentage >= 40) {
+                message = 'Fair attempt. Consider reviewing the concepts you struggled with.';
+            } else {
+                message = 'Keep practicing! C programming takes time to master.';
+            }
+            document.getElementById('performance-message').textContent = message;
+            
+            // Generate question review
+            generateQuestionReview(results.questionResults);
+        }
+
+        // Generate Question Review
+        function generateQuestionReview(questionResults) {
+            const reviewContainer = document.getElementById('review-questions');
+            reviewContainer.innerHTML = '';
+            
+            questionResults.forEach((result, index) => {
+                const question = result.question;
+                const isCorrect = result.isCorrect;
+                const userAnswer = result.userAnswer;
+                
+                let reviewHTML = `
+                    <div class="review-question ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="review-header">
+                            <div class="review-question-number">Question ${index + 1}</div>
+                            <div class="review-status ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? 'Correct' : 'Incorrect'}
+                            </div>
+                        </div>
+                        <div class="review-question-text">${question.question}</div>
+                        <div class="review-answers">
+                `;
+                
+                if (question.type === 'multiple-choice' || question.type === 'true-false') {
+                    // Show user's answer
+                    if (userAnswer !== undefined) {
+                        reviewHTML += `
+                            <div class="review-answer ${isCorrect ? 'your-answer correct-answer' : 'your-answer wrong-answer'}">
+                                <span class="review-answer-label">Your Answer:</span>
+                                ${question.options[userAnswer]}
+                            </div>
+                        `;
+                    }
+                    
+                    // Show correct answer if incorrect
+                    if (!isCorrect) {
+                        reviewHTML += `
+                            <div class="review-answer correct-answer">
+                                <span class="review-answer-label">Correct Answer:</span>
+                                ${question.options[question.correct]}
+                            </div>
+                        `;
+                    }
+                } else if (question.type === 'fill-blank') {
+                    // Show user's answer
+                    if (userAnswer !== undefined) {
+                        reviewHTML += `
+                            <div class="review-answer ${isCorrect ? 'your-answer correct-answer' : 'your-answer wrong-answer'}">
+                                <span class="review-answer-label">Your Answer:</span>
+                                ${userAnswer}
+                            </div>
+                        `;
+                    }
+                    
+                    // Show correct answer if incorrect
+                    if (!isCorrect) {
+                        reviewHTML += `
+                            <div class="review-answer correct-answer">
+                                <span class="review-answer-label">Correct Answer:</span>
+                                ${question.answer}
+                            </div>
+                        `;
+                    }
+                }
+                
+                // Add explanation
+                reviewHTML += `
+                        </div>
+                        <div class="review-explanation">
+                            <div class="review-explanation-title">Explanation:</div>
+                            <div class="review-explanation-text">${question.explanation}</div>
+                        </div>
+                    </div>
+                `;
+                
+                reviewContainer.innerHTML += reviewHTML;
+            });
+        }
+
+        // Print Results
+        function printResults() {
+            window.print();
+        }
+
+        // Finish Exam
+        function finishExam() {
+            // This would redirect to a dashboard or home page
+            alert('Exam finished. Thank you for taking the C Programming Exam!');
+        }
+
+        // Initialize exam when page loads
+        document.addEventListener('DOMContentLoaded', initExam);
+    </script>
+</body>
+</html>
